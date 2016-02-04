@@ -1,8 +1,9 @@
 #!/usr/bin/python
+
 import os, sys
 status = os.system("docker-compose run web python manage.py test")
 
 if status != 0:
+  print("************")
   print("The tests are not passing. Please fix this before pushing your code")
   sys.exit(status)
-
