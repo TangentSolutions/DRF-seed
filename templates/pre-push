@@ -8,7 +8,7 @@ if [ $RESULT -ne 0 ]; then
     echo "Oh hell no!"
     echo "The tests have failed. Cancelling push"
     echo "------------------"
-    echo "If you _really_ want to push this code run: git push origin master --no-verify"
+    echo "If you _really_ want to push this code push with the --no-verify switch"
     echo ""
     exit 1
 fi
