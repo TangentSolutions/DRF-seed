@@ -1,0 +1,41 @@
+- hosts: localhost
+  vars: 
+    - project_name: "TodoService"
+  vars_prompt:
+    - name: "project_name"
+      prompt: "What is the  name of this project? (e.g.: AcmeService, .. etc)"
+	   tags: 
+       - start
+       - first_time
+
+  tasks:
+    - name: Create django project 
+      command: "django-admin.py startproject {{project_name|lower}} ." 
+      args:
+        creates: "{{project_name|lower}}"
+      tags: 
+        - start
+
+    - name: Insert correct DB settings
+      template: 
+        src: settings.py
+        dest: "{{project_name|lower}}/docker_settings.py"
+      tags: 
+        - start
+
+    - name: Import docker_settings from settings.py
+      lineinfile:
+        line: "if os.environ.get('WITH_DOCKER', False) == 'True': from {{project_name|lower}}.docker_settings import *"
+        dest: "{{project_name|lower}}/settings.py"
+      tags: 
+        - start
+
+    - name: Fix gunicorn command in docker-compose
+      replace:
+        dest: docker-compose.yml
+        regexp: \{\{project_name\}\}
+
+    - name: Start an app called api
+      command: python manage.py startapp api 
+      args:
+        creates: api

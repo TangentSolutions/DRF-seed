@@ -1,0 +1,17 @@
+db:
+  image: postgres
+web:
+  build: .
+  command: gunicorn todoapi.wsgi:application -b :8000
+  volumes:
+    - .:/code
+  ports:
+    - "8000:8000"
+  links:
+    - db
+ci:
+  build: . 
+  dockerfile: CI.Dockerfile 
+  command: ansible-playbook bootstrap.yml
+  volumes:
+    - .:/code
