@@ -39,3 +39,9 @@
       command: python manage.py startapp api 
       args:
         creates: api
+
+    - name: Copy git hook for push
+      template:
+        src: pre-push
+        dest: .git/hooks/pre-push
+        mode: 755

@@ -1,9 +1,14 @@
-#!/usr/bin/python
-
-import os, sys
-status = os.system("docker-compose run web python manage.py test")
-
-if status != 0:
-  print("************")
-  print("The tests are not passing. Please fix this before pushing your code")
-  sys.exit(status)
+#!/bin/bash 
+docker-compose run web python manage.py test
+RESULT=$?
+if [ $RESULT -ne 0 ]; then 
+    echo ""
+    echo ""
+    echo "\******************"
+    echo "Oh hell no!"
+    echo "The tests have failed. Cancelling push"
+    echo "------------------"
+    echo "If you _really_ want to push this code run: git push origin master --no-verify"
+    echo ""
+    exit 1
+fi
