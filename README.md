@@ -14,3 +14,9 @@ docker-compose run ci
 ```
 
 Go get a cup of coffee.
+
+Once it's done:
+
+```
+docker-machine ip default
+```
