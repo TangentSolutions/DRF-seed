@@ -5,6 +5,7 @@ A seed project for create a Django Rest Framework-based API
 
 download and unzip the latest release
 ```
+curl .. |unzip 
 ```
 
 run:
