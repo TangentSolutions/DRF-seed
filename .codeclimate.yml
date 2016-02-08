@@ -14,4 +14,9 @@ engines:
 ratings:
   paths:
   - "**.py"
-exclude_paths: [env/*, reports/*]
+exclude_paths:
+- static/**/*
+- env/**/*
+- ansibles/**/*
+- ./**/tests.py
+- reports/**/*

@@ -1,0 +1,117 @@
+- hosts: localhost
+  vars: 
+    - project_name: "TodoService"
+    - with_api: no
+    - with_swagger: no
+
+  vars_prompt:
+    - name: "project_name"
+      prompt: "What is the  name of this project? (e.g.: AcmeService, .. etc)"
+      default: TodoService
+      private: no
+      tags: 
+        - start
+        - first_time
+
+    - name: "with_api"
+      prompt: "Would you like to bootstrap an API with DRF? (yes/no)"
+      default: yes
+      private: no
+      tags: 
+        - start
+        - first_time
+
+    - name: "with_swagger"
+      prompt: "Would you like to add swagger documentation? (yes/no)"
+      default: yes
+      private: no
+      tags: 
+        - start
+        - first_time
+      when: with_api | bool
+
+    - name: "with_token_auth"
+      prompt: "Would you like to add token authentication to your app? (yes/no)"
+      default: yes
+      private: no
+      tags: 
+        - start
+        - first_time
+      when: with_api | bool      
+    
+
+  tasks:
+    - name: Create django project 
+      command: "django-admin.py startproject {{project_name|lower}} ." 
+      args:
+        creates: "{{project_name|lower}}"
+      tags: 
+        - start
+
+    - name: Fix gunicorn command in docker-compose
+      replace:
+        dest: docker-compose.yml
+        regexp: \{\{project_name\}\}
+        replace: "{{project_name|lower}}"
+        
+
+    - name: Copy git hook for push
+      template:
+        src: pre-push
+        dest: .git/hooks/pre-push
+        mode: 755
+
+      ## BLOCK: API:
+    - block:
+      - name: Start an app called api
+        command: python manage.py startapp api 
+        args:
+          creates: api
+      - name: views.py for api 
+        template: 
+          src: views.py 
+          dest: api/views.py 
+      - name: permissions.py for api 
+        template: 
+          src: permissions.py 
+          dest: api/permissions.py 
+      - name: tests.py for api 
+        template: 
+          src: tests.py 
+          dest: api/tests.py 
+      when: with_api | bool
+
+
+    - name: Put the urls.py in place
+      template: 
+        src: urls.py
+        dest: "{{project_name|lower}}/urls.py"
+
+    - name: Insert correct DB settings
+      template: 
+        src: settings.py
+        dest: "{{project_name|lower}}/docker_settings.py"
+      tags: 
+        - start
+
+    - name: Import docker_settings from settings.py
+      lineinfile:
+        line: "if os.environ.get('WITH_DOCKER', False) == 'True': from {{project_name|lower}}.docker_settings import *"
+        dest: "{{project_name|lower}}/settings.py"
+      tags: 
+        - start
+
+    - name: Collect static 
+      django_manage: 
+        command: collectstatic
+        app_path: .
+
+    - name: Migrate
+      django_manage: 
+        command: migrate
+        app_path: .
+
+    - name: Create superuser 
+      django_manage:
+        command: createsuperuser 
+        app_path: . 

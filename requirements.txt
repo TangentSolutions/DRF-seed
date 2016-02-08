@@ -11,5 +11,12 @@ django-extensions
 coverage
 responses
 mock
+markdown
+
+## testing:
+nose
+django_nose
+pinocchio
+nose-html-reporting
 
 gunicorn

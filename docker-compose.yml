@@ -2,7 +2,7 @@ db:
   image: postgres
 web:
   build: .
-  command: gunicorn todoapi.wsgi:application -b :8000
+  command: gunicorn acme.wsgi:application -b :8000
   volumes:
     - .:/code
   ports:
@@ -12,6 +12,8 @@ web:
 ci:
   build: . 
   dockerfile: CI.Dockerfile 
-  command: ansible-playbook bootstrap.yml
+  #command: ansible-playbook ansibles/bootstrap.yml
   volumes:
     - .:/code
+  links:
+    - db
