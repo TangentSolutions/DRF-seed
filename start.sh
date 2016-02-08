@@ -14,7 +14,10 @@ docker-compose run --rm ci ansible-playbook ansibles/bootstrap.yml
 
 echo "******************"
 echo "Success!" 
+echo "******************"
 echo "To run your app try: docker-compose up"
+echo "you might want to quickly create a superuser: docker-compose rum --rm web python manage.py createsuperuser"
 echo "To run the tests: docker-compose run --rm web python manage.py test"
 echo "To continuosly run the tests: docker-compose run --rm web python sniffer" 
+echo "NBNBNBNBNBNB: ALWAYS RUN ALL COMMANDS THROUGH DOCKER. E.G.: docker-compose run --rm ...."
 echo "... have fun ..."
