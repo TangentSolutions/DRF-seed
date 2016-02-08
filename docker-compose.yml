@@ -2,7 +2,7 @@ db:
   image: postgres
 web:
   build: .
-  command: gunicorn acme.wsgi:application -b :8000
+  command: gunicorn {{project_name}}.wsgi:application -b :8000
   volumes:
     - .:/code
   ports:
