@@ -10,9 +10,11 @@ Download and run the startup script
 
 ```bash
 wget https://raw.githubusercontent.com/TangentSolutions/DRF-seed/master/start.sh
-sh ./start.sh
+sh ./start.sh {project_name}
 # answer the prompts .. 
 ```
+
+Where `{project_name}` is something like `UserService`, `TodoService` .. etc
 
 > .. This might take quite a while to run the first time .. so perhaps go grab yourself a coffee while you wait for this to finish.
 
