@@ -6,6 +6,8 @@ A seed project for create a Django Rest Framework-based API
 
 ## On a mac/linuxy system:
 
+> Ensure WGET is installed on Mac using `brew install wget`
+
 Download and run the startup script
 
 ```bash
