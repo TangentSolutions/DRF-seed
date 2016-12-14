@@ -40,17 +40,24 @@
       when: with_api | bool      
     
 
-  tasks:
+  tasks: 
     - name: Create django project 
       command: "django-admin.py startproject {{project_name|lower}} ." 
       args:
+        chdir: /code
         creates: "{{project_name|lower}}"
       tags: 
         - start
 
+    - name: Update consul settings
+      replace:
+        dest: "/code/tangent"
+        regexp: \{\{project_name\}\}
+        replace: "{{project_name|lower}}"
+
     - name: Fix gunicorn command in docker-compose
       replace:
-        dest: docker-compose.yml
+        dest: "/code/docker-compose.yml"
         regexp: \{\{project_name\}\}
         replace: "{{project_name|lower}}"
         
@@ -58,60 +65,61 @@
     - name: Copy git hook for push
       template:
         src: pre-push
-        dest: .git/hooks/pre-push
+        dest: /code/.git/hooks/pre-push
         mode: 755
 
       ## BLOCK: API:
     - block:
       - name: Start an app called api
-        command: python manage.py startapp api 
+        command: python manage.py startapp api
         args:
+          chdir: /code
           creates: api
       - name: views.py for api 
         template: 
           src: views.py 
-          dest: api/views.py 
+          dest: /code/api/views.py
       - name: permissions.py for api 
         template: 
           src: permissions.py 
-          dest: api/permissions.py 
+          dest: /code/api/permissions.py
       - name: tests.py for api 
         template: 
           src: tests.py 
-          dest: api/tests.py 
+          dest: /code/api/tests.py
       when: with_api | bool
 
 
     - name: Put the urls.py in place
       template: 
         src: urls.py
-        dest: "{{project_name|lower}}/urls.py"
+        dest: "/code/{{project_name|lower}}/urls.py"
 
     - name: Insert correct DB settings
       template: 
         src: settings.py
-        dest: "{{project_name|lower}}/docker_settings.py"
+        dest: "/code/{{project_name|lower}}/docker_settings.py"
       tags: 
         - start
 
     - name: Import docker_settings from settings.py
       lineinfile:
         line: "if os.environ.get('WITH_DOCKER', False) == 'True': from {{project_name|lower}}.docker_settings import *"
-        dest: "{{project_name|lower}}/settings.py"
+        dest: "/code/{{project_name|lower}}/settings.py"
       tags: 
         - start
 
     - name: Collect static 
       django_manage: 
         command: collectstatic
-        app_path: .
+        app_path: /code
 
     - name: Migrate
       django_manage: 
         command: migrate
-        app_path: .
+        app_path: /code
 
     - name: Create superuser 
       django_manage:
         command: createsuperuser 
-        app_path: . 
+        app_path: /code

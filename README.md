@@ -27,6 +27,14 @@ cd {project_name}
 docker-compose up
 ```
 
+In order to start a new django application run the following command:
+
+docker-compose run --rm web django-admin startapp {app name}
+
+eg:
+
+docker-compose run --rm web django-admin startapp api
+
 Check out your website on `docker-machine ip default`:8000. 
 
 **You might want to create a superuser:**

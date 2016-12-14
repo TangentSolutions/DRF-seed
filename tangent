@@ -1,0 +1,24 @@
+project_name: {{project_name}}
+cobertura_xml_report_file: reports/coverage.xml
+app_health_path: '/health/'
+build_commands: []
+test_commands: 
+  - python manage.py test
+pre_service_up_commands: []
+post_service_up_commands: 
+  - python manage.py migrate
+  - python manage.py createcachetable
+
+# service optionals:
+consul_tags: 
+  - api_service
+
+with_kong: yes
+kong_simple_plugins:
+  - cors 
+  - key-auth
+
+kong_configurable_plugins:
+  - name: http-log
+    config: 
+      http_endpoint: "http://logstash.service.consul:8021/{{project_subdomain}}"

@@ -1,17 +1,23 @@
 django==1.9.2 
 djangorestframework==3.3.2
 django-filter
-django-rest-swagger
-psycopg2
+django-rest-swagger==0.3.7
+django-bootstrap3
+django-admin-bootstrapped
+#psycopg2
 requests
+gevent
 
 sniffer
 django-jenkins
 django-extensions
+django-cors-headers
 coverage
 responses
 mock
 markdown
+ipdb
+ipython
 
 ## testing:
 nose
