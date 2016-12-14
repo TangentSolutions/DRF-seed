@@ -4,7 +4,7 @@ django-filter
 django-rest-swagger==0.3.7
 django-bootstrap3
 django-admin-bootstrapped
-#psycopg2
+psycopg2
 requests
 gevent
 
